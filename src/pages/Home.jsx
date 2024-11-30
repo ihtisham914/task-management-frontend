@@ -19,7 +19,14 @@ const Home = () => {
     // Fetch tasks using React Query
     const { data, isLoading, error, isError } = useQuery({
         queryKey: ['tasks'],
-        queryFn: () => fetch(`${API}/tasks`).then(res => res.json()),
+        queryFn: () =>
+            fetch(`${API}/tasks`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(res => res.json()),
     });
 
     // Function to handle filter change

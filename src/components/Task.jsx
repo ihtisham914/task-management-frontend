@@ -8,19 +8,26 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API } from '../apiConfig';
+import { useUserContext } from '../context/UserContext';
+
 
 const Task = ({ task, searchQuery }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const queryClient = useQueryClient();
+    const { user, token } = useUserContext();
 
     // Mutation to delete a task
     const deleteTaskMutation = useMutation({
         mutationFn: async (taskId) => {
-            return await axios.delete(`${API}/tasks/${taskId}`);
+            return await axios.delete(`${API}/tasks/${taskId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries('tasks'); // Refetch tasks after successful deletion
+            queryClient.invalidateQueries('tasks');
             toast.success("Task deleted successfully!");
         },
         onError: (error) => {
@@ -30,7 +37,7 @@ const Task = ({ task, searchQuery }) => {
     });
 
     const handleDelete = () => {
-        deleteTaskMutation.mutate(task._id); // Call mutation with task ID
+        deleteTaskMutation.mutate(task._id);
     };
 
     const statusColors = {

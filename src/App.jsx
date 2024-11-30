@@ -11,8 +11,8 @@ import { UserProvider } from './context/UserContext';
 function App() {
   return (
     <TanstackProvider>
-      <UserProvider>
-        <Router>
+      <Router>
+        <UserProvider>
           <Routes>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
@@ -20,8 +20,8 @@ function App() {
             {/* Protected route to ensure that only authenticated users can access tasks */}
             <Route path="/" element={<CheckAuth element={<Home />} />} index />
           </Routes>
-        </Router>
-      </UserProvider>
+        </UserProvider>
+      </Router>
       <ToastNotification />
     </TanstackProvider >
   )

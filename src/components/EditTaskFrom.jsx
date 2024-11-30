@@ -5,8 +5,11 @@ import axios from 'axios';
 import { API } from '../apiConfig';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { useUserContext } from '../context/UserContext';
+
 
 const EditTaskForm = ({ task, setShowModal }) => {
+    const { user, token } = useUserContext();
     const queryClient = useQueryClient();
 
     const formik = useFormik({
@@ -32,9 +35,14 @@ const EditTaskForm = ({ task, setShowModal }) => {
         },
     });
 
+    // Mutation to update task
     const editTaskMutation = useMutation({
         mutationFn: async (updatedTask) => {
-            return await axios.patch(`${API}/tasks/${task._id}`, updatedTask);
+            return await axios.patch(`${API}/tasks/${task._id}`, updatedTask, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries('tasks');
@@ -43,7 +51,7 @@ const EditTaskForm = ({ task, setShowModal }) => {
         },
         onError: (error) => {
             console.error(error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || "Error updating task");
         },
     });
 

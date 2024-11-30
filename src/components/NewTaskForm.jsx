@@ -5,9 +5,12 @@ import { API } from '../apiConfig';
 import axios from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { useUserContext } from '../context/UserContext';
+
 
 const NewTaskForm = ({ setShowModal }) => {
     const queryClient = useQueryClient();
+    const { token, user } = useUserContext();
 
     const formik = useFormik({
         initialValues: {
@@ -28,15 +31,20 @@ const NewTaskForm = ({ setShowModal }) => {
                 .oneOf(['Pending', 'In Progress', 'Completed'], 'Invalid status'),
         }),
         onSubmit: (values) => {
-            addTaskMutation.mutate(values);
+            const task = { ...values, userId: user._id };
+            addTaskMutation.mutate(task);
         },
     });
 
 
-
+    // Mutation to add task
     const addTaskMutation = useMutation({
         mutationFn: async (newTask) => {
-            return await axios.post(`${API}/tasks`, newTask);
+            return await axios.post(`${API}/tasks`, newTask, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries('tasks');
@@ -45,7 +53,7 @@ const NewTaskForm = ({ setShowModal }) => {
         },
         onError: (error) => {
             console.error(error);
-            toast.error("Error adding Task");
+            toast.error("Error adding task");
         },
     });
 
