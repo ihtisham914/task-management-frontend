@@ -4,12 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import Task from '../components/Task';
 import Header from '../components/Header';
 import ReactPaginate from 'react-paginate';
+import { useUserContext } from '../context/UserContext';
+
+
 
 const Home = () => {
+    const { user, token } = useUserContext();
     const [filter, setFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const tasksPerPage = 3;
+
 
     // Fetch tasks using React Query
     const { data, isLoading, error, isError } = useQuery({

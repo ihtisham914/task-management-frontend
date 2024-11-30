@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { API } from '../apiConfig';
-
 import toast from 'react-hot-toast';
+import { useUserContext } from '../context/UserContext';
 
 // Validation schema using Yup
 const validationSchema = Yup.object({
@@ -18,6 +18,7 @@ const validationSchema = Yup.object({
 
 const Login = () => {
     const navigate = useNavigate();
+    const { loginUser } = useUserContext();
 
     const formik = useFormik({
         initialValues: {
@@ -37,8 +38,7 @@ const Login = () => {
 
                 const data = await response.json();
                 if (data.success) {
-                    // Store the token in localStorage or sessionStorage
-                    localStorage.setItem('token', data.token);
+                    loginUser(data.user, data.token);
                     toast.success('Login successful 🎉');
                     navigate('/');
                 } else {

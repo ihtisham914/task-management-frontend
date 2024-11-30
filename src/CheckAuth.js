@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from './context/UserContext';
+
 
 const CheckAuth = ({ element }) => {
-    const token = localStorage.getItem('token');
+    const { token } = useUserContext();
     const navigate = useNavigate();
 
     useEffect(() => {

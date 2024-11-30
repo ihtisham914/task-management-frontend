@@ -23,7 +23,7 @@ const validationSchema = Yup.object({
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);  // Loading state
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
