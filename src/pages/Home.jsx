@@ -3,9 +3,12 @@ import { API } from '../apiConfig';
 import { useQuery } from '@tanstack/react-query';
 import Task from '../components/Task';
 import Header from '../components/Header';
+import ReactPaginate from 'react-paginate';
 
 const Home = () => {
     const [filter, setFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(0);
+    const tasksPerPage = 3;
 
     // Fetch tasks using React Query
     const { data, isLoading, error, isError } = useQuery({
@@ -16,6 +19,7 @@ const Home = () => {
     // Function to handle filter change
     const handleFilterChange = (e) => {
         setFilter(e.target.value);
+        setCurrentPage(0);
     };
 
     // Filter tasks based on the selected filter
@@ -26,6 +30,15 @@ const Home = () => {
     // Sort tasks by dueDate in ascending order (earliest first)
     const sortedTasks = filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
+    // Calculate pagination
+    const offset = currentPage * tasksPerPage;
+    const paginatedTasks = sortedTasks.slice(offset, offset + tasksPerPage);
+    const pageCount = Math.ceil(sortedTasks.length / tasksPerPage);
+
+    const handlePageClick = (event) => {
+        setCurrentPage(event.selected);
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div className='text-red-500'>{error.message}</div>;
 
@@ -33,7 +46,6 @@ const Home = () => {
         <div className='max-w-md mx-auto mt-4'>
             {/* Header */}
             <Header />
-            {/* Tasks */}
             <div className='p-4 border border-gray-100 rounded-b-xl'>
                 {/* Filter */}
                 <div className='flex items-center justify-between'>
@@ -56,14 +68,30 @@ const Home = () => {
 
                 {/* Task listing */}
                 <div className='flex flex-col gap-2 w-full mt-4'>
-                    {sortedTasks.length > 0 ? (
-                        sortedTasks.map((task, index) => (
+                    {paginatedTasks.length > 0 ? (
+                        paginatedTasks.map((task, index) => (
                             <Task key={index} task={task} />
                         ))
                     ) : (
                         <p className='text-center text-gray-500'>No {filter !== 'all' ? filter : ''} tasks available.</p>
                     )}
                 </div>
+                {/* Pagination */}
+                <ReactPaginate
+                    previousLabel={'Previous'}
+                    nextLabel={'Next'}
+                    breakLabel={'...'}
+                    pageCount={pageCount}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={3}
+                    onPageChange={handlePageClick}
+                    containerClassName={'pagination flex justify-center mt-4 gap-2'}
+                    pageClassName={'border px-3 py-1 rounded-lg'}
+                    activeClassName={'bg-blue-500 text-white'}
+                    previousClassName={'border px-3 py-1 rounded-lg'}
+                    nextClassName={'border px-3 py-1 rounded-lg'}
+                    disabledClassName={'opacity-50 cursor-not-allowed'}
+                />
             </div>
         </div>
     );
