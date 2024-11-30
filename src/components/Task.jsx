@@ -9,7 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { API } from '../apiConfig';
 
-const Task = ({ task }) => {
+const Task = ({ task, searchQuery }) => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const queryClient = useQueryClient();
@@ -39,13 +39,20 @@ const Task = ({ task }) => {
         'Completed': 'bg-green-500',
     };
 
+    // Function to highlight matching text in title and description
+    const highlightText = (text, query) => {
+        if (!query) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, (match) => `<span class="bg-yellow-300">${match}</span>`);
+    };
+
     return (
         <>
             <div className={`border border-gray-100 w-full rounded-lg shadow-sm p-2 flex`}>
                 <div className='flex flex-col w-[70%]'>
                     <span className='text-sm font-medium text-gray-500'>{task.dueDate ? moment(task.dueDate).format('DD MMMM, YYYY') : 'No due date'}</span>
-                    <h2 className='font-medium'>{task.title}</h2>
-                    {task.description && <p className='text-sm text-gray-500'>{task.description}</p>}
+                    <h2 className='font-medium' dangerouslySetInnerHTML={{ __html: highlightText(task.title, searchQuery) }} />
+                    {task.description && <p className='text-sm text-gray-500' dangerouslySetInnerHTML={{ __html: highlightText(task.description, searchQuery) }} />}
                 </div>
                 <div className='flex flex-col gap-4 items-end justify-between text-sm mb-1 w-[30%]'>
                     <span className={`px-2 pb-1 ${statusColors[task.status]} text-white rounded-full w-fit`}>

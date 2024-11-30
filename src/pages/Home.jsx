@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 
 const Home = () => {
     const [filter, setFilter] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const tasksPerPage = 3;
 
@@ -22,10 +23,19 @@ const Home = () => {
         setCurrentPage(0);
     };
 
-    // Filter tasks based on the selected filter
-    const filteredTasks = filter === 'all'
-        ? data?.data || [] // Show all tasks if filter is 'all'
-        : data?.data.filter((task) => task.status === filter) || [];
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value.toLowerCase());
+        setCurrentPage(0); // Reset pagination on search change
+    };
+
+    // Filter and search tasks
+    const filteredTasks = (data?.data || [])
+        .filter(task => filter === 'all' || task.status === filter) // Filter by status
+        .filter(task => // Filter by search query (title + description)
+            task.title.toLowerCase().includes(searchQuery) ||
+            task.description.toLowerCase().includes(searchQuery)
+        );
 
     // Sort tasks by dueDate in ascending order (earliest first)
     const sortedTasks = filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
@@ -66,11 +76,22 @@ const Home = () => {
                     </div>
                 </div>
 
+                {/* Search */}
+                <div className='mt-2'>
+                    <input
+                        type="text"
+                        placeholder="Search by title or description..."
+                        className='w-full px-2 py-1 border border-gray-100 rounded'
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
+                </div>
+
                 {/* Task listing */}
                 <div className='flex flex-col gap-2 w-full mt-4'>
                     {paginatedTasks.length > 0 ? (
                         paginatedTasks.map((task, index) => (
-                            <Task key={index} task={task} />
+                            <Task key={index} task={task} searchQuery={searchQuery} />
                         ))
                     ) : (
                         <p className='text-center text-gray-500'>No {filter !== 'all' ? filter : ''} tasks available.</p>
