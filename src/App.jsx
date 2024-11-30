@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import ToastNotification from './components/Toast';
 import Signup from './pages/SignUp';
 import { UserProvider } from './context/UserContext';
-import CheckAuth from './CheckAuth';
+import CheckAuth from './checkAuthHelper/checkAuth';
 
 
 
