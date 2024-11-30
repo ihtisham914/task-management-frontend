@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import TanstackProvider from './Providers/TanstackProvider';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import ToastNotification from './components/Toast';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="login" element={<Login />} />
         </Routes>
       </BrowserRouter>
+      <ToastNotification />
     </TanstackProvider >
   )
 }
