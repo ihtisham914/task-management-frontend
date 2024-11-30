@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-const CheckAuth = ({ element }) => {
+const checkAuth = ({ element }) => {
     const Token = localStorage.getItem('token');
     const navigate = useNavigate();
 
@@ -15,4 +15,4 @@ const CheckAuth = ({ element }) => {
     return Token ? element : null;
 };
 
-export default CheckAuth;
+export default checkAuth;
