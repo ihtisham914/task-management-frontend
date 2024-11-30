@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import ToastNotification from './components/Toast';
 import CheckAuth from './checkAuth';
+import Signup from './pages/SignUp';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
 
           {/* Protected route to ensure that only authenticated users can access tasks */}
           <Route path="/" element={<CheckAuth element={<Home />} />} index />
