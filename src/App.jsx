@@ -1,19 +1,22 @@
 import './App.css'
-import { BrowserRouter, Routes, Route } from "react-router";
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 import TanstackProvider from './Providers/TanstackProvider';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import ToastNotification from './components/Toast';
+import CheckAuth from './checkAuth';
 
 function App() {
   return (
     <TanstackProvider>
-      <BrowserRouter>
+      <Router>
         <Routes>
-          <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
+
+          {/* Protected route to ensure that only authenticated users can access tasks */}
+          <Route path="/" element={<CheckAuth element={<Home />} />} index />
         </Routes>
-      </BrowserRouter>
+      </Router>
       <ToastNotification />
     </TanstackProvider >
   )
